@@ -49,7 +49,7 @@ body{background:linear-gradient(#0b1220,#02050c);font-family:'Rajdhani',Arial,sa
   <div id="nusd">NUSD: 0</div>
   <div id="player"></div>
   <div id="ground"></div>
-  <div id="gameOver"><div>GAME OVER</div><button id="restartBtn">PLAY AGAIN</button></div>
+  <div id="gameOver"><div>GAME OVER</div><button id="restartBtn">Main Lagi</button></div>
 </div>
 
 <audio id="jumpSfx" src="jump.wav" preload="auto" playsinline></audio>
@@ -107,7 +107,9 @@ let highScore=parseInt(localStorage.getItem('satsumeHighScore')||'0');
 highScoreText.textContent='High Score: '+highScore;
 let velocityY=0,gravity=1.1;
 let obstacles=[],coins=[];
-let score=0,level=1;
+let score=parseInt(localStorage.getItem('satsumeScore')||'0');
+scoreText.textContent='Score: '+score;
+let level=1;
 let nusd=parseInt(localStorage.getItem('satsumeNUSD')||'0');
 nusdText.textContent='NUSD: '+nusd;
 let isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -180,7 +182,7 @@ function update(){
     const p=player.getBoundingClientRect(),b=o.getBoundingClientRect();
     const pS=14,oS=12;
     if(p.right-pS>b.left+oS&&p.left+pS<b.right-oS&&p.bottom-pS>b.top+oS&&p.top+pS<b.bottom-oS) endGame();
-    if(parseInt(o.style.left)<-200){o.remove();obstacles.splice(i,1);score++;scoreText.textContent='Score: '+score;}
+    if(parseInt(o.style.left)<-200){o.remove();obstacles.splice(i,1);score++;scoreText.textContent='Score: '+score;localStorage.setItem('satsumeScore',score);}
   }
 
   for(let i=coins.length-1;i>=0;i--){
@@ -189,7 +191,7 @@ function update(){
     const p=player.getBoundingClientRect(),b=c.getBoundingClientRect();
     const pS=18,cS=8;
     if(p.right-pS>b.left+cS&&p.left+pS<b.right-cS&&p.bottom-pS>b.top+cS&&p.top+pS<b.bottom-cS){
-      c.remove();coins.splice(i,1);nusd++;nusdText.textContent='NUSD: '+nusd;
+      c.remove();coins.splice(i,1);nusd++;nusdText.textContent='NUSD: '+nusd;localStorage.setItem('satsumeNUSD',nusd);
       coinSfx.currentTime=0;coinSfx.play().catch(()=>{});
     } else if(parseInt(c.style.left)<-100){c.remove();coins.splice(i,1);}
   }
@@ -203,6 +205,7 @@ function endGame(){
   gameOverSfx.play().catch(()=>{});
   bgmGame.pause();
   bgmSplash.pause();
+  if(score>highScore){highScore=score;localStorage.setItem('satsumeHighScore',highScore);highScoreText.textContent='High Score: '+highScore;}
   gameOverScreen.style.display='flex';
 }
 
