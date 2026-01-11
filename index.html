@@ -49,7 +49,7 @@ body{background:linear-gradient(#0b1220,#02050c);font-family:'Rajdhani',Arial,sa
   <div id="nusd">NUSD: 0</div>
   <div id="player"></div>
   <div id="ground"></div>
-  <div id="gameOver"><div>GAME OVER</div><button id="restartBtn">Main Lagi</button></div>
+  <div id="gameOver"><div>GAME OVER</div><button id="restartBtn">PLAY AGAIN</button></div>
 </div>
 
 <audio id="jumpSfx" src="jump.wav" preload="auto" playsinline></audio>
@@ -107,11 +107,13 @@ let highScore=parseInt(localStorage.getItem('satsumeHighScore')||'0');
 highScoreText.textContent='High Score: '+highScore;
 let velocityY=0,gravity=1.1;
 let obstacles=[],coins=[];
-let score=parseInt(localStorage.getItem('satsumeScore')||'0');
+let score=0;
 scoreText.textContent='Score: '+score;
 let level=1;
+levelText.textContent='Level: '+level;
 let nusd=parseInt(localStorage.getItem('satsumeNUSD')||'0');
 nusdText.textContent='NUSD: '+nusd;
+let obstaclePassedCount=0;
 let isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 let speed=isMobile?4.5:6;
 let gameOver=false;
@@ -182,7 +184,18 @@ function update(){
     const p=player.getBoundingClientRect(),b=o.getBoundingClientRect();
     const pS=14,oS=12;
     if(p.right-pS>b.left+oS&&p.left+pS<b.right-oS&&p.bottom-pS>b.top+oS&&p.top+pS<b.bottom-oS) endGame();
-    if(parseInt(o.style.left)<-200){o.remove();obstacles.splice(i,1);score++;scoreText.textContent='Score: '+score;localStorage.setItem('satsumeScore',score);}
+    if(parseInt(o.style.left)<-200){
+      o.remove();
+      obstacles.splice(i,1);
+      score++;
+      scoreText.textContent='Score: '+score;
+      localStorage.setItem('satsumeScore',score);
+      obstaclePassedCount++;
+      if(obstaclePassedCount%25===0){
+        level++;
+        levelText.textContent='Level: '+level;
+      }
+    }
   }
 
   for(let i=coins.length-1;i>=0;i--){
